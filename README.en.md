@@ -25,7 +25,7 @@ sudo pacman -S gcc cmake make
 ## Build
 
 ```
-git clone <repo-url>
+git clone https://github.com/Sesdear/nfqws2-strategy-generator.git
 cd nfqws2-strategy-generator
 mkdir build && cd build
 cmake ..
