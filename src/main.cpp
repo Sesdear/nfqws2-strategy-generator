@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
         std::string file = "strategies_"+service+"_"+blob+"_"+mode+"."+format;
         format=="json" ? gen.save_json(v,file) : gen.save_txt(v,file);
 
-        std::cout << "✅ " << p << " → "
+        std::cout << p << " -> "
                     << std::filesystem::absolute(file) << "\n";
     }
 }
