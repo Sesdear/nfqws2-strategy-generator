@@ -1,4 +1,4 @@
-# zapret2-strategy-generator
+# nfqws2-strategy-generator
 ### English readme: [here](README.en.md)
 # RU
 
