@@ -14,18 +14,21 @@ public:
 
     std::vector<std::string> gen_simple(
         const std::string& service,
-        const std::string& blob,
+        const std::string& blob_name,
+        const std::string& blob_path,
         int count);
 
     std::vector<std::string> gen_advanced(
         const std::string& service,
-        const std::string& blob,
+        const std::string& blob_name,
+        const std::string& blob_path,
         int count,
         int complexity);
 
     std::vector<std::string> gen_mixed(
         const std::string& service,
-        const std::string& blob,
+        const std::string& blob_name,
+        const std::string& blob_path,
         int count);
 
     void save_txt(const std::vector<std::string>&, const std::string&);
