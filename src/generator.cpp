@@ -44,7 +44,11 @@ static const std::map<std::string, std::string> BLOBS = {
 
 static const std::map<std::string, std::string> DOMAINS = {
     {"youtube", "youtube.com,www.youtube.com,googlevideo.com,gvt1.com,ytimg.com"},
-    {"discord", "discord.com,discordapp.com,discord.gg,cdn.discordapp.com"}};
+    {"discord", "discord.com,discordapp.com,discord.gg,cdn.discordapp.com"},
+    {"instagram", "instagram.com,cdninstagram.com,i.instagram.com"},
+    {"twitter", "twitter.com,x.com,t.co,abs.twimg.com,pbs.twimg.com"},
+    {"reddit", "reddit.com,www.reddit.com,old.reddit.com"},
+    {"pinterest", "pinterest.com,www.pinterest.com,pin.it,pinimg.com"}};
 
 static const std::vector<std::string> SNIS = {
     "epp.genproc.gov.ru", "duma.gov.ru",
@@ -558,29 +562,6 @@ static const std::vector<std::string> SNIS = {
     "akashi.vk-portal.net"};
 
 
-static void resolve_blob(
-    const std::string &blob,
-    std::string &blob_name,
-    std::string &blob_path)
-{
-    if (blob.find('/') != std::string::npos)
-    {
-        blob_name = "custom";
-        blob_path = blob;
-        return;
-    }
-
-    if (BLOBS.count(blob))
-    {
-        blob_name = blob;
-        blob_path = BLOBS.at(blob);
-        return;
-    }
-
-    blob_name = "custom";
-    blob_path = blob;
-}
-
 
 
 FastStrategyGenerator::FastStrategyGenerator() {}
@@ -598,10 +579,15 @@ FastStrategyGenerator::gen_simple(
         DOMAINS.count(service) ? DOMAINS.at(service)
                                 : DOMAINS.begin()->second;
 
+    std::string actual_blob_path = blob_path;
+    if (actual_blob_path.empty() && BLOBS.count(blob_name)) {
+        actual_blob_path = BLOBS.at(blob_name);
+    }
+
     while ((int)out.size() < count)
     {
         std::stringstream s;
-        s << "--blob=fake_" << blob_name << ":" << blob_path
+        s << "--blob=fake_" << blob_name << ":" << actual_blob_path
             << " --filter-tcp=443 --filter-l7=tls "
             << "--hostlist-domains=" << dom
             << " --out-range=-d10 --payload=tls_client_hello "
@@ -636,6 +622,11 @@ FastStrategyGenerator::gen_advanced(
         DOMAINS.count(service) ? DOMAINS.at(service)
                                 : DOMAINS.begin()->second;
 
+    std::string actual_blob_path = blob_path;
+    if (actual_blob_path.empty() && BLOBS.count(blob_name)) {
+        actual_blob_path = BLOBS.at(blob_name);
+    }
+
     int tries = 0;
 
     while ((int)out.size() < count && tries < count * 10)
@@ -650,7 +641,7 @@ FastStrategyGenerator::gen_advanced(
             fake << ":tls_mod=sni=" << SNIS[rnd(0, SNIS.size() - 1)];
 
         std::stringstream s;
-        s << "--blob=fake_" << blob_name << ":" << blob_path
+        s << "--blob=fake_" << blob_name << ":" << actual_blob_path
             << " --filter-tcp=443 --filter-l7=tls "
             << "--hostlist-domains=" << dom
             << " --out-range=-d10 --payload=tls_client_hello "
